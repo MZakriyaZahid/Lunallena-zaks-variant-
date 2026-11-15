@@ -1,37 +1,62 @@
 /* =========================================================
-   Lunallena 🌕 v4.15
-   by Acercandr0
+   Lunallena, Zak's variant
+   Based on Lunallena v4.15 by Acercandr0
+   Slate background, one pale-gold accent, no scale-on-hover.
+   Includes the fork's progress bar rework and the fullscreen
+   Now Playing footer fix (last section).
    ========================================================= */
+
+/* Optional font. If Tidal blocks the import, the system font is used. */
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap');
 
 /* =========================================================
    VARIABLES
+   To re-theme, change --bg-solid, --accent and the three text
+   colors. Every glass and surface color is derived from them.
    ========================================================= */
 
 :root {
 
-    /* Accent Color */
-    --accent: rgb(216, 255, 144);
-    --wave-color-solid-accent-fill: rgb(144, 255, 179);
+    /* Palette */
+    --bg-solid: rgb(35, 40, 52);        /* slate */
+    --accent: rgb(232, 210, 154);       /* moon gold */
+    --text-1: rgb(236, 232, 223);
+    --text-2: rgb(170, 177, 192);
+    --text-3: rgb(127, 135, 154);
 
-    /* Background Colors */
-    --bg-solid: rgb(0, 0, 0);
-    --bgeneral: rgb(0, 0, 0);
-    --bg-glass-light: rgba(50, 50, 50, 0.5);
-    --bg-glass-dark: rgba(20, 20, 20, 0.3);
-    --bg-glass-darker: rgba(0, 0, 0, 0.5);
-    --bg-shortcut: rgba(255, 255, 255, 0.07);
-    --bg-shortcut-hover: rgba(255, 255, 255, 0.15);
-    --bg-button-hover: rgba(255, 255, 255, 0.12);
+    /* Alternative palettes: swap the five lines above for one of these
+       Harbor:     bg rgb(31, 45, 49)   accent rgb(233, 201, 160)
+       Aubergine:  bg rgb(42, 36, 51)   accent rgb(185, 211, 194)
+       Ink:        bg rgb(28, 34, 46)   accent rgb(176, 196, 232)
+    */
+
+    /* Tidal's own tokens */
+    --bgeneral: var(--bg-solid);
+    --wave-color-solid-accent-fill: var(--accent);
+
+    /* Derived surfaces */
+    --surface: color-mix(in srgb, var(--bg-solid), white 10%);
+    --bg-glass-light: color-mix(in srgb, var(--surface) 60%, transparent);
+    --bg-glass-dark: color-mix(in srgb, var(--bg-solid) 55%, transparent);
+    --bg-glass-darker: color-mix(in srgb, color-mix(in srgb, var(--bg-solid), black 25%) 72%, transparent);
+    --bg-button-hover: color-mix(in srgb, var(--text-1) 12%, transparent);
 
     /* Border */
-    --border: 1px solid rgba(255, 255, 255, 0.06);
-    
+    --border: 1px solid color-mix(in srgb, var(--text-1) 9%, transparent);
+
+    /* Radii: big floating panels, mid-size blocks, small art */
+    --r-lg: 18px;
+    --r-md: 12px;
+    --r-sm: 8px;
+
     /* Effects */
-    --blur-glass: blur(35px) saturate(2.5);
-    --blur: blur(17px) saturate(3);
-    --blur-now-playing: blur(40px) saturate(2.5);
-    --hover-inactive: grayscale(0%) opacity(50%);
+    --blur-glass: blur(30px) saturate(1.7);
+    --blur: blur(18px) saturate(1.8);
+    --blur-now-playing: blur(40px) saturate(1.7);
+    --hover-inactive: grayscale(0%) opacity(60%);
     --hover-active: grayscale(0%) opacity(100%);
+
+    --font: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* =========================================================
@@ -47,7 +72,27 @@
     display: none;
 }
 
-/* Font Override */
+html,
+body {
+    background-color: var(--bg-solid);
+}
+
+body,
+button,
+input,
+textarea {
+    font-family: var(--font);
+}
+
+::selection {
+    background-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 [class="wave-text-body-demi"] {
     font-size: 14px;
 }
@@ -61,10 +106,10 @@
 }
 
 #spotlighted-badge * {
-    fill: var(--wave-color-solid-accent-fill) !important;
+    fill: var(--accent) !important;
 }
 
-/* Tidal Tags */
+/* Quality tags (MAX, HIRES etc.) */
 [class="format-info"] {
     font-size: 11px !important;
     max-width: 50px;
@@ -73,54 +118,61 @@
 }
 
 /* =========================================================
-   TEXT STYLES
+   TEXT
+   Accent is kept for state (selected, progress, counters), not for
+   body copy, so it still reads as a signal.
    ========================================================= */
 
+[data-wave-color="textPrimary"] {
+    color: var(--text-1);
+}
+
+[data-wave-color="textSecondary"] {
+    color: var(--text-2);
+}
+
+[data-wave-color="textTertiary"] {
+    color: var(--text-3);
+}
+
 [class*="headerContainer"] > h2 {
-    font-size: 30px !important;
-    color: var(--accent);
+    font-size: 28px !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-1);
 }
 
 [class*="heading"] {
-    color: var(--accent);
+    color: var(--text-1);
 }
 
 h1 {
     font-size: 30px !important;
-    color: var(--accent) !important;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--text-1) !important;
 }
 
 [data-test="feed-counter"] {
     background-color: color-mix(in srgb, var(--accent), black 20%);
+    color: var(--bg-solid);
 }
 
 [data-test="artist-name"] {
-    color: var(--accent);
+    color: var(--text-1);
     font-size: 60px;
-    line-height: 70px !important;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 66px !important;
 }
 
 [data-test="follow-text-button"] {
     margin-bottom: 15px;
 }
 
-[data-wave-color=textSecondary] {
-    color: var(--accent);
-}
-
-[data-wave-color="textTertiary"] {
-    color: var(--accent);
-}
-
 /* =========================================================
    LAYOUT & SPACING
    ========================================================= */
-
-/* Window Maxed Space */
-
-[class*="_bar_"] {
-    border: none !important;
-}
 
 #main {
     height: 100svh;
@@ -151,11 +203,6 @@ h1 {
     padding-bottom: 40px;
 }
 
-[class*="_sidebarWrapper_"] {
-    top: 2vh;
-    height: 76vh
-}
-
 [class*="_sectionHeader"] {
     position: relative;
     background-color: transparent;
@@ -164,7 +211,7 @@ h1 {
 /* =========================================================
    QUEUE SIDEBAR
    ========================================================= */
-   
+
 [class*="playQueueWrapper"] {
     height: 100svh;
     margin-left: calc(var(--playQueueWidth) * -1 - 480px);
@@ -180,12 +227,12 @@ h1 {
 }
 
 [class*="stickyHeader"] {
-  background: transparent;
-  position: relative;
+    background: transparent;
+    position: relative;
 }
 
-[class*="stickyHeader"]::after{
-  display: none;
+[class*="stickyHeader"]::after {
+    display: none;
 }
 
 /* =========================================================
@@ -195,11 +242,12 @@ h1 {
 [class*="_bar_"] {
     background: var(--bg-glass-dark) !important;
     backdrop-filter: var(--blur);
+    border: none !important;
     border-bottom: var(--border) !important;
 }
 
 div[class^="_bar_"] > div[class^="_title_"] * {
-    color: var(--wave-color-solid-accent-fill) !important;
+    color: var(--text-2) !important;
 }
 
 div[class*="_bar_"] button[class*="_button_"] {
@@ -207,31 +255,33 @@ div[class*="_bar_"] button[class*="_button_"] {
 }
 
 div[class*="_bar_"] button[class*="_button_"] svg {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-3);
 }
 
 div[class*="_bar_"] button[class*="_button_"]:hover svg {
-    color: rgba(255, 255, 255, 1);
+    color: var(--text-1);
 }
 
 /* =========================================================
    HEADERS
    ========================================================= */
 
-/* Main Header */
+/* Main header: slides down from the top edge on hover */
 #mainHeader {
     background-color: var(--bg-glass-light);
     backdrop-filter: var(--blur-glass);
     margin-top: -80px;
     width: 30vw;
+    min-width: 420px;
     left: 50%;
     transform: translateX(-50%);
     border: var(--border);
-    border-radius: 0 0 20px 20px;
+    border-top: none;
+    border-radius: 0 0 var(--r-lg) var(--r-lg);
     padding-top: 45px;
     padding-left: 20px;
     padding-right: 20px;
-    transition: margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: visible;
     pointer-events: visible;
 }
@@ -242,7 +292,7 @@ div[class*="_bar_"] button[class*="_button_"]:hover svg {
 
 #mainHeader > * {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
     pointer-events: none;
 }
 
@@ -251,14 +301,12 @@ div[class*="_bar_"] button[class*="_button_"]:hover svg {
     pointer-events: auto;
 }
 
-/* Search Field */
 [data-type="search-field"] {
     background-color: transparent;
     border: var(--border);
     box-shadow: none;
 }
 
-/* Navigation Arrows */
 [data-test="navigation-arrows"] {
     display: flex;
     gap: 8px;
@@ -266,7 +314,7 @@ div[class*="_bar_"] button[class*="_button_"]:hover svg {
 }
 
 [data-test="navigation-arrows"] button {
-    background-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: color-mix(in srgb, var(--bg-solid), black 30%) !important;
     background-image: none;
     border-radius: 50%;
     width: 40px;
@@ -284,14 +332,14 @@ div[class*="_bar_"] button[class*="_button_"]:hover svg {
 }
 
 [data-test="navigation-arrows"] button:hover:not(:disabled) {
-    background-color: rgba(0, 0, 0, 0.3) !important;
+    background-color: color-mix(in srgb, var(--bg-solid), black 55%) !important;
 }
 
 [data-test="navigation-arrows"] button:disabled {
-    background-color: transparent;
+    background-color: transparent !important;
 }
 
-/* Small Header */
+/* Small header (shown when scrolled) */
 [class^="_smallHeader_"] {
     background: none !important;
     margin-top: -40px;
@@ -306,7 +354,7 @@ div[class^="_smallHeader_"]::before {
     margin-top: -40px;
 }
 
-/* Contributor Header */
+/* Contributor header */
 div[data-test-module-type="CONTRIBUTOR_HEADER"] header[class*="container"] {
     background-color: var(--bg-glass-light);
     backdrop-filter: var(--blur-glass);
@@ -317,40 +365,43 @@ div[data-test-module-type="CONTRIBUTOR_HEADER"] header[class*="container"] {
     height: 140px;
 }
 
-/* Album Header */
+/* Album header */
 [class*="dataContainer"]::before {
     height: 100% !important;
 }
 
 /* =========================================================
    NAVIGATION SIDEBAR
+   Collapsed to a thin tab on the left edge, opens on hover.
    ========================================================= */
 
 [class*="_sidebarWrapper_"]::after {
     display: none;
 }
 
+[class*="_sidebarWrapper_"] {
+    top: 2vh;
+    height: 76vh;
+    left: -47px;
+    border: var(--border);
+    border-left: none;
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+    background-color: var(--bg-glass-light);
+    backdrop-filter: var(--blur-glass);
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 [class*="_sidebarWrapper_"][style="width: 240px;"] {
     left: -217px;
 }
 
-[class*="_sidebarWrapper_"] {
-    border-radius: 0 20px 20px 0;
-    left: -47px;
-    border: var(--border);
-    border-left: none;
-    background-color: var(--bg-glass-light);
-    backdrop-filter: var(--blur-glass);
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 [class*="_sidebarWrapper_"]:hover {
-    left: 0px;
+    left: 0;
 }
 
 [class*="_sidebarWrapper_"] > * {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
     pointer-events: none;
 }
 
@@ -363,9 +414,9 @@ div[data-test-module-type="CONTRIBUTOR_HEADER"] header[class*="container"] {
     background-color: transparent;
 }
 
-/* Focus Hover Effect */
+/* Playlists: dim the others while one is hovered */
 [aria-label="Playlists"] [class*="_contentItem_"] {
-    transition: filter 0.4s ease-in-out, transform 0.3s ease;
+    transition: filter 0.25s ease;
 }
 
 [aria-label="Playlists"]:hover [class*="_contentItem_"] {
@@ -375,29 +426,19 @@ div[data-test-module-type="CONTRIBUTOR_HEADER"] header[class*="container"] {
 [aria-label="Playlists"] [class*="_contentItem_"]:hover,
 [aria-label="Playlists"] [class*="_selected_"] {
     filter: var(--hover-active) !important;
-    transform: scale(1.03);
 }
 
-/* Sidebar Navlinks */
+/* Nav links */
 [class*="_navLinkInnerLayout_"] {
     background-color: transparent;
-    transition: background-color 0.4s ease, transform 0.4s ease;
+    border-radius: var(--r-sm);
+    transition: background-color 0.2s ease;
 }
 
 [class*="_navLinkInnerLayout_"]:hover {
-    background-color: var(--bg-glass-dark);
-    transform: scale(1.03);
+    background-color: var(--bg-button-hover);
 }
 
-[class*="_expandableSectionTitle_"] {
-    transition: transform 0.4s ease;
-}
-
-[class*="_expandableSectionTitle_"]:hover {
-    transform: scale(1.03);
-}
-
-/* Sidebar Buttons */
 [data-test="user-profile-avatar"] {
     background-color: transparent;
     border: var(--border);
@@ -424,24 +465,22 @@ div[data-test-module-type="CONTRIBUTOR_HEADER"] header[class*="container"] {
     transform: translateX(-150px);
 }
 
+/* Artwork gets a hairline so its edge holds against the slate */
 [class*="_card_"] [class*="_imageContainer_"] {
-    border-radius: 10px;
+    border-radius: var(--r-md);
     overflow: hidden;
-    transition: filter 0.6s ease-in-out, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-[class*="cardContainer"] [class*="_imageContainer_"] {
-    filter: var(--hover-inactive) !important;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-1) 7%, transparent);
+    transition: filter 0.25s ease;
 }
 
 [class*="_card_"] [class*="_imageContainer_"]:hover {
-    filter: var(--hover-active) !important;
-    transform: scale(1.03);
+    filter: brightness(1.1);
 }
 
 [data-test="horizontal-list--YOUR_FAVORITE_ARTISTS-scroll"] [class*="_imageContainer_"] {
     height: 300px;
 }
+
 [class*="_card_"] [class*="_imageContainer_"] [class*="round"] {
     border-radius: var(--market-core-radius-100);
 }
@@ -479,6 +518,7 @@ div[data-test="query-suggestions"] {
     height: calc(80vh - var(--miniPlayerHeight));
     background-color: var(--bg-solid);
     border: var(--border);
+    border-radius: var(--r-md);
 }
 
 div[data-test="query-suggestions"] div[class*="_icon_"] {
@@ -494,7 +534,7 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
 }
 
 [class*="_dataContainer_"] > div > div:nth-child(3) {
-    border-radius: 10px;
+    border-radius: var(--r-md);
     margin-left: -15px;
     padding: 15px;
     max-width: 50%;
@@ -509,6 +549,7 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
 
 /* =========================================================
    FOOTER PLAYER
+   The whole bar fills with a soft accent wash as the track plays.
    ========================================================= */
 
 [data-test="footer-player"] {
@@ -518,7 +559,7 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
     width: 98vw;
     height: 100px;
     bottom: 2vh;
-    border-radius: 20px;
+    border-radius: var(--r-lg);
     background-color: var(--bg-glass-light) !important;
     backdrop-filter: var(--blur);
 }
@@ -526,10 +567,7 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
 [data-test="footer-player"]::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     border: var(--border);
     border-bottom: none;
     border-radius: inherit;
@@ -543,25 +581,36 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
 }
 
 [aria-label="Progress bar"] {
-    position: fixed;
-    top: -75px;
-    width: 98vw;
-    height: 100px;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 25px !important;
+    margin: 0 !important;
+    transform: none !important;
+    background: transparent !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
 }
 
 [class*="_range_"] {
-    background: transparent;
-    border-radius: 20px;
+    background: transparent !important;
+    border-radius: var(--r-lg);
 }
 
 [data-test="progress-indicator"] {
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
 }
 
 [data-test="interaction-layer"] {
-    height: 25px;
-    transform: translateY(-115px);
-    pointer-events: auto;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 25px !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    z-index: 20 !important;
 }
 
 #progressBar > div > [class*="toolTip"] {
@@ -569,7 +618,7 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
     scale: 1;
     overflow: visible;
     background-color: var(--bg-solid);
-    color: white;
+    color: var(--text-1);
     border: var(--border);
     height: 25px;
 }
@@ -587,6 +636,11 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
     margin-top: 15px;
 }
 
+[data-test="current-time"],
+[data-test="duration"] {
+    font-variant-numeric: tabular-nums;
+}
+
 [data-test="left-column-footer-player"],
 [class*="_leftColumn_"] {
     overflow: visible !important;
@@ -596,9 +650,9 @@ div[data-test="query-suggestions"] div[class*="_icon_"] {
     height: 64px;
     margin-top: 4px;
     margin-left: 2px;
-    border-radius: 8px;
+    border-radius: var(--r-sm);
     scale: 1.3;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-1) 12%, transparent);
 }
 
 [class*="currentMediaItemDetails"] {
@@ -628,15 +682,14 @@ button[aria-label="Play queue"] {
     border-radius: var(--market-core-radius-100);
 }
 
-[class*='_knob_'] {
+[class*="_knob_"] {
     width: 10px;
     height: 10px;
     margin-left: -6px;
     margin-top: -2px;
     border-radius: 50%;
     box-shadow: none;
-    background-color: var(--wave-color-solid-accent-fill);
-
+    background-color: var(--accent);
 }
 
 [class*="nativeRangeContainer"] {
@@ -690,12 +743,11 @@ input[class*="_nativeRange"]::-webkit-slider-thumb {
     display: none;
 }
 
-/* Control Buttons */
 button[data-test="close-now-playing"],
 button[data-test="request-fullscreen"] {
     background-color: transparent;
     border: var(--border);
-    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 button[data-test="close-now-playing"]:hover,
@@ -715,11 +767,11 @@ figure[data-test="now-playing-image"] {
    MENUS & TOOLTIPS
    ========================================================= */
 
-/* Context Menu */
 [class*="contextMenu"][role="menu"] {
     position: relative;
     background-color: transparent;
     border: var(--border);
+    border-radius: var(--r-md);
     box-shadow: none;
 }
 
@@ -736,11 +788,11 @@ figure[data-test="now-playing-image"] {
     position: relative;
 }
 
-/* Submenus */
 [class*="_subMenu_"] {
     position: relative;
     background-color: transparent;
     border: var(--border);
+    border-radius: var(--r-md);
     box-shadow: none;
     overflow: hidden;
     z-index: 0;
@@ -773,22 +825,79 @@ figure[data-test="now-playing-image"] {
     z-index: 2;
 }
 
-/* Tooltips */
 [class*="_marketTooltipContainer_"] {
     background-color: var(--bg-glass-dark);
     backdrop-filter: var(--blur-glass);
     border: var(--border);
-    color: white;
+    color: var(--text-1);
 }
 
 [class*="_tooltipText_"] {
     background-color: transparent;
     backdrop-filter: var(--blur-glass);
     border: var(--border);
-    color: white;
+    color: var(--text-1);
 }
 
 [class*="_tooltipText_"]::after,
 [class*="_sidebarTooltip_"]::after {
     display: none;
+}
+
+/* =========================================================
+   FULLSCREEN NOW PLAYING: FIX FOOTER CLIPPING
+   ========================================================= */
+
+/* Let the footer player extend outside the fullscreen Now Playing column */
+[class*="_nowPlayingContainer_"],
+[data-test="now-playing"] {
+    overflow: visible !important;
+}
+
+/* Keep the normal footer player dimensions */
+[data-test="footer-player"] {
+    position: fixed !important;
+    left: 50% !important;
+    width: 98vw !important;
+    max-width: none !important;
+    height: 100px !important;
+    bottom: 2vh !important;
+    transform: translateX(-50%) !important;
+}
+
+/* Progress bar fills the whole player, so the accent wash covers it */
+[data-test="footer-player"] [aria-label="Progress bar"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100px !important;
+    transform: none !important;
+}
+
+/* Only the top strip is interactive */
+[data-test="footer-player"] [data-test="interaction-layer"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 25px !important;
+    transform: none !important;
+    pointer-events: auto !important;
+}
+
+/* The played portion */
+[data-test="footer-player"] [data-test="progress-indicator"] {
+    background-color: color-mix(in srgb, var(--accent) 15%, transparent) !important;
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
 }
